@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- x11 look: a square window, titlebar with the grip, an envelope, the accent dot of "mail." -->
+  <rect x="4" y="4" width="120" height="120" fill="#17110c" stroke="#4a3c2d" stroke-width="4"/>
+  <rect x="6" y="6" width="116" height="18" fill="#120d08"/>
+  <rect x="13" y="12" width="5" height="5" fill="#8c7f6d"/>
+  <rect x="21" y="12" width="5" height="5" fill="#8c7f6d"/>
+  <rect x="22" y="40" width="84" height="58" fill="none" stroke="#ddd2c4" stroke-width="6"/>
+  <polyline points="22,40 64,72 106,40" fill="none" stroke="#3b8a3e" stroke-width="6"/>
+  <rect x="98" y="102" width="14" height="14" fill="#3b8a3e"/>
+</svg>

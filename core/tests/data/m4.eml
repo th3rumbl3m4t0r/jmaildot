@@ -1,0 +1,41 @@
+From: Bob <bob@example.com>
+To: Alice <alice@example.com>
+Subject: Secret plan
+Date: Thu, 01 Oct 2026 17:15:15 -0000
+Message-ID: <secret-plan@example.com>
+MIME-Version: 1.0
+Content-Type: multipart/encrypted; protocol="application/pgp-encrypted"; boundary="b2"
+
+--b2
+Content-Type: application/pgp-encrypted
+
+Version: 1
+--b2
+Content-Type: application/octet-stream; name="encrypted.asc"
+Content-Disposition: inline; filename="encrypted.asc"
+
+-----BEGIN PGP MESSAGE-----
+
+hF4DCkVvx/cobxYSAQdAbq2KnUPaucA+nQMK2FyC6qSXyxXnKTVNmf68KYQTtUYw
+ICTmb3MWPyMR4eOaRwGUcCh/yb+hsrYpz9Kkgjx497PBVt+6UVuyF1gLuXmRIoJq
+1OkBCQIQaAz601kjA7MsiB+8itVhc0PTno7Hw4qI/H2vkozu4J8RpBh68azWQpFR
+36vNqnsEpeswNm3PIffXbA10w1fBRzNbWqBnnZS+8itRSk9epZwrJbeC4XNNZrS7
+BTd84qOiNAYyGQcgNkY3HdcJUiouukllZLdPHd+6kGUFInybH5I3znnSfNERV/dx
+oHM9PpnDvsNXfIjPocq+kzlJP13luYzaIFfTZiZfni79hk1SpqcQW5oGmmyTZapu
+i8WA4CkQcyIxCUos31lZKnjkEQbiuF/npoOccblXa1t5w3dH524VG7ZhCtrVzPI5
+X0EwKeird8SYBsQ+gmGJL/TJ1df9tVndYMPU+qest9EDrtqyz5Ib5R2Y6wW7jX9N
+jEm0+MlTvcnSvSZJr75Z+5n+N8JMlh2dRxXjSiWdqpY3FKqwL4OFU3c7Jb0tzyHW
+CBlzvJuen0i1ZKUdK7wICmxk4qO96M1SQa1QqK4jBYLHsCfeHdxYcA1DtdrPx3nd
+N/9btgYYftYL0tQHAx2mNKHIzzalEeEb/vtMDPounQcgqNIZaH8O1tb2/r9AkfS6
+3t53rJdyIs3DgF8XO/I2wk4xpnQ77fywHvFhMNq+0XrTTSNWrTrzdbg7iZMqPaHV
+vd46XDSGyYY5Zc8MijDxqF/AEbDkmUlMSqaL9C7BA4fsscBldQl2feLsl/d5vCeA
+/kLYn5w65SVN2QMpRV8eJezO7f40gl7AaEYRmE1oHNELKRRADA/iFW92t9UVaw4G
+V1DTXMtWc2dkBBLIz1rWMGOPCRS3IsW3tMKeuL3RErgaD3344q/L52TXS+3ZyZvQ
+80p5gqX39hvuLdn95zyvTWfA8u6nvHn0bNBlxX/oA9PApI4/oKCQcHLCagshRiFs
+VXsPPoKGAFARzdgRl8845n72puYVUXg7lnKG0EJ5jLSDSA9lnZ3PktVRei/2cD2c
+i5azbfsQhTzS9/u7HH+18FkNXjJ6/yU1XLxQ0Dvup8NpgSw6A01lF/ACf3cpsdgs
+pMCq3UIKopDyvUwJkhh7xJYFWeMmiqu5/fQtw1kR4xcUJePlVt0FLNI=
+=Okln
+-----END PGP MESSAGE-----
+
+--b2--

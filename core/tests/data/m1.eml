@@ -1,0 +1,15 @@
+From: Bob <bob@example.com>
+To: Alice <alice@example.com>
+Subject: Plain hello
+Date: Thu, 01 Oct 2026 17:15:15 -0000
+Message-ID: <plain-hello@example.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+Ahoj Alice,
+
+toto je obyčejný text — čau.
+
+-- 
+Bob

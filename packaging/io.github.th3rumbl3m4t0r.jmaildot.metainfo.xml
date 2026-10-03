@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.th3rumbl3m4t0r.jmaildot</id>
+  <name>mail.</name>
+  <summary>Mail and calendar: JMAP, CalDAV, Sieve, OpenPGP, local search</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <description>
+    <p>Mail and calendar for the desktop, made for Stalwart. Every message is downloaded and kept
+    locally, decrypted, and searched on all cores: plain text or regular expressions, case,
+    whole words, any field. Sieve filters with a rule builder; OpenPGP built in; several
+    accounts; shared calendars each in a pane of their own; shelf for attachments.</p>
+  </description>
+  <url type="homepage">https://github.com/th3rumbl3m4t0r/jmaildot</url>
+  <launchable type="desktop-id">io.github.th3rumbl3m4t0r.jmaildot.desktop</launchable>
+  <provides>
+    <binary>maildot</binary>
+  </provides>
+</component>

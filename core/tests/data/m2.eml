@@ -1,0 +1,9 @@
+From: Bob <bob@example.com>
+To: Alice <alice@example.com>
+Subject: Html only
+Date: Thu, 01 Oct 2026 17:15:15 -0000
+Message-ID: <html-only@example.com>
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><head><style>p{color:red}</style></head><body><p>Hello <b>Alice</b>,</p><p>this is <i>html</i> only.<br>Second line.</p><ul><li>one</li><li>two</li></ul><a href='http://x.example/'>a link</a></body></html>

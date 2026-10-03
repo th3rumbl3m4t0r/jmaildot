@@ -1,0 +1,15 @@
+[package]
+name = "maildot"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+maildot-core = { path = "../core" }
+gtk = { package = "gtk4", version = "0.10", features = ["v4_16"] }
+sourceview5 = "0.10"
+anyhow = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "sync", "time"] }
+async-channel = "2"
+chrono = "0.4"
+regex = "1"
+base64 = "0.22"

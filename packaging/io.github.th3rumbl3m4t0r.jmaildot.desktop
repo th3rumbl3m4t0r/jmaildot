@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=mail.
+GenericName=Mail and calendar
+Comment=Mail over JMAP, calendars over CalDAV, Sieve filters, OpenPGP, local search
+Exec=maildot %u
+Icon=io.github.th3rumbl3m4t0r.jmaildot
+Terminal=false
+Categories=Network;Email;Calendar;Office;GTK;
+MimeType=x-scheme-handler/mailto;
+Keywords=mail;email;calendar;jmap;caldav;sieve;pgp;stalwart;
+StartupNotify=true
+StartupWMClass=io.github.th3rumbl3m4t0r.jmaildot

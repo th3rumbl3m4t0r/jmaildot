@@ -1,0 +1,14 @@
+Content-Type: multipart/mixed; boundary="b1"
+
+--b1
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+See the attached table =E2=80=94 2 rows.
+--b1
+Content-Type: text/csv; name="table.csv"
+Content-Disposition: attachment; filename="table.csv"
+Content-Transfer-Encoding: base64
+
+Y29sMSxjb2wyCjEsMgozLDQK
+--b1--

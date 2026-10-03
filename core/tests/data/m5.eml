@@ -1,0 +1,32 @@
+From: Bob <bob@example.com>
+To: Alice <alice@example.com>
+Subject: Signed only
+Date: Thu, 01 Oct 2026 17:29:49 -0000
+Message-ID: <signed-only@example.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha256; boundary="b3"
+
+--b3
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+This one is only signed =E2=80=94 by Bob.
+
+--b3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQHEBAABCAAuFiEElj/k4fQUqkivUhFtX8mM/K9viXsFAmq+lSMQHGJvYkBleGFt
+cGxlLmNvbQAKCRBfyYz8r2+Je8qNDACUueXD8nq1ILbuvzCwBcY0UURgs7UWSJDj
+cPkZHIieoe5yMMLRCgZlBA4lve0d7SYK4bgsVf2oYPOkdbJBDRsqL1rJS4I8QftM
+9L6uQw6TIMuA6pXxR3Uu762iB+BpyAtUFq7Lb0L9G+APOLlqFfeIYtvXUcLCDbBT
+o+zaGc1sOaVAEyb3gGAbDEkUWUylk5vhm1l615qZRzm8YCoXPwszYV9yriEZG6y6
+2/kmnAoXRkBXzPW8QuHEJ7FWC8diKVlEcmi2HCzhWeQ6lpgPR/4UXQE4EThK67sw
+Iwv8ejiChETTl9nJvd1GFVy5pGqD6G3xrOvMfig1ladWHeBao71JFIbvPQZ5u0Za
+dHzAyEIbV7GjwaoU24ZTsX+hQhM/qX1VnGwjmYlMtvMRES2z8l0bh10cf1Ko41Uq
+bayumFETqsDWZ6L5V3ZQEMduz6mC+r+1g8SuIpIq3AleE04ZC897NgAqDk6vJFPH
++pvVXPO5w4xHUmle7cWXhex4XMHCztA=
+=e+xV
+-----END PGP SIGNATURE-----
+--b3--
