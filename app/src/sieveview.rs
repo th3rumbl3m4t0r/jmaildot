@@ -315,7 +315,8 @@ impl Ed {
     }
 
     fn fill_folders(&self) {
-        let names: Vec<String> = crate::mail::tree(&eng().db.mailboxes(self.account)).into_iter().map(|(m, _)| m.name).collect();
+        let list = eng().db.mailboxes(self.account);
+        let names: Vec<String> = crate::mail::tree(&list).into_iter().map(|(m, _)| sieve::folder_path(&list, &m)).collect();
         let refs: Vec<&str> = names.iter().map(|s| s.as_str()).collect();
         self.folder.set_model(Some(&gtk::StringList::new(&refs)));
         *self.folders.borrow_mut() = names;

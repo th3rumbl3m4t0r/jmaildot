@@ -38,6 +38,14 @@ install -Dm644 io.github.th3rumbl3m4t0r.jmaildot.metainfo.xml %{buildroot}%{_met
 %{_metainfodir}/io.github.th3rumbl3m4t0r.jmaildot.metainfo.xml
 
 %changelog
+* Tue Oct 06 2026 th3rumbl3m4t0r <th3rumbl3m4t0r@users.noreply.github.com> - 0.1.3-1
+- sieve rule builder: move / copy go to the folder's whole path (Inbox/lists); the name alone
+  ("lists") made the server look for a top-level folder and keep the mail in the inbox
+
+* Mon Oct 05 2026 th3rumbl3m4t0r <th3rumbl3m4t0r@users.noreply.github.com> - 0.1.2-1
+- drag messages onto a folder to move them there (the selection, or the dragged row);
+  the folder under the pointer is highlighted, only folders of the messages' account take them
+
 * Sat Oct 03 2026 th3rumbl3m4t0r <th3rumbl3m4t0r@users.noreply.github.com> - 0.1.1-1
 - the reader no longer offers "always for <domain>"; domains are added in settings -> html mail
 - favourite from addresses on top of the from list (star / unstar there)

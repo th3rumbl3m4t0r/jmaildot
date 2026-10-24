@@ -1,6 +1,7 @@
 //! The little Sieve we write: one `if` block per rule, appended to the script, with the
 //! `require` line kept in step. The script itself stays plain text the user can edit.
 
+use crate::model::Mailbox;
 use regex::Regex;
 use std::collections::BTreeSet;
 
@@ -183,6 +184,23 @@ pub fn add_rule(script: &str, r: &Rule) -> String {
     format!("{req}{}{}", if body.is_empty() { String::new() } else { format!("{body}\n\n") }, block(r))
 }
 
+/// The folder as `fileinto` wants it: the whole path from the top (`Inbox/lists`), not the
+/// name alone, which the server takes for a top-level folder and, finding none, keeps the
+/// message in the inbox.
+pub fn folder_path(list: &[Mailbox], m: &Mailbox) -> String {
+    let mut parts = vec![m.name.as_str()];
+    let mut cur = m;
+    while let Some(p) = cur.parent.as_deref().and_then(|p| list.iter().find(|x| x.id == p)) {
+        if parts.len() > list.len() {
+            break;
+        }
+        parts.push(&p.name);
+        cur = p;
+    }
+    parts.reverse();
+    parts.join("/")
+}
+
 pub const TEMPLATE: &str = "# Sieve rules, run by the server when mail arrives.\n# Add rules with the builder or write them here.\n";
 
 /// `line 3, column 5` style positions in a server error, if it says.
@@ -207,6 +225,17 @@ mod tests {
         assert!(s.contains("if address :contains \"from\" \"shop@\" {\n    addflag \"\\\\Seen\";\n    fileinto \"Shops\";\n    stop;\n}\n"));
         let s2 = add_rule(&s, &Rule { action: Action::Flag, also_read: false, ..rule() });
         assert_eq!(s2.matches("require").count(), 1);
+    }
+
+    #[test]
+    fn folder_paths() {
+        let mb = |id: &str, name: &str, parent: Option<&str>| Mailbox { account: 1, id: id.into(), name: name.into(), role: None, parent: parent.map(Into::into), sort: 0, total: 0, unread: 0, notify: None };
+        let list = vec![mb("a", "Inbox", None), mb("b", "lists", Some("a")), mb("c", "2026", Some("b")), mb("d", "Old", None), mb("e", "lost", Some("zz"))];
+        assert_eq!(folder_path(&list, &list[0]), "Inbox");
+        assert_eq!(folder_path(&list, &list[1]), "Inbox/lists");
+        assert_eq!(folder_path(&list, &list[2]), "Inbox/lists/2026");
+        assert_eq!(folder_path(&list, &list[3]), "Old");
+        assert_eq!(folder_path(&list, &list[4]), "lost");
     }
 
     #[test]

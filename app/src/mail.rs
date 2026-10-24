@@ -75,8 +75,37 @@ pub fn row_obj(m: MsgRow) -> glib::BoxedAnyObject {
     glib::BoxedAnyObject::new(m)
 }
 
-/// The list row: dot, sender, marks, date / subject / preview.
-pub fn row_factory(show_account: Rc<Cell<bool>>, snippet: bool) -> gtk::SignalListItemFactory {
+/// What a message drag carries: the ids after a prefix, so text dropped from elsewhere is not taken for it.
+const DRAG_PREFIX: &str = "maildot-ids:";
+
+fn drag_text(ids: &[i64]) -> String {
+    format!("{DRAG_PREFIX}{}", ids.iter().map(|i| i.to_string()).collect::<Vec<_>>().join(","))
+}
+
+fn drag_ids(text: &str) -> Vec<i64> {
+    text.strip_prefix(DRAG_PREFIX).map(|s| s.split(',').filter_map(|x| x.parse().ok()).collect()).unwrap_or_default()
+}
+
+fn row_id(o: &glib::BoxedAnyObject) -> Option<i64> {
+    if let Ok(h) = o.try_borrow::<(MsgRow, String)>() {
+        return Some(h.0.id);
+    }
+    o.try_borrow::<MsgRow>().ok().map(|m| m.id)
+}
+
+/// The messages a drag from this row takes: the selection when the row is in it, else the row alone.
+fn dragged(item: &gtk::ListItem, root: &gtk::Widget) -> Vec<i64> {
+    let Some(this) = item.item().and_downcast::<glib::BoxedAnyObject>().as_ref().and_then(row_id) else { return vec![] };
+    if !item.is_selected() {
+        return vec![this];
+    }
+    let Some(model) = root.ancestor(gtk::ListView::static_type()).and_downcast::<gtk::ListView>().and_then(|l| l.model()) else { return vec![this] };
+    let bs = model.selection();
+    (0..bs.size()).filter_map(|k| model.item(bs.nth(k as u32)).and_downcast::<glib::BoxedAnyObject>().as_ref().and_then(row_id)).collect()
+}
+
+/// The list row: dot, sender, marks, date / subject / preview. With [drag], rows can be dragged onto a folder.
+pub fn row_factory(show_account: Rc<Cell<bool>>, snippet: bool, drag: bool) -> gtk::SignalListItemFactory {
     let f = gtk::SignalListItemFactory::new();
     f.connect_setup(move |_, item| {
         let item = item.downcast_ref::<gtk::ListItem>().unwrap();
@@ -102,6 +131,26 @@ pub fn row_factory(show_account: Rc<Cell<bool>>, snippet: bool) -> gtk::SignalLi
         root.append(&preview);
         if snippet {
             preview.add_css_class("snippet");
+        }
+        if drag {
+            let src = gtk::DragSource::new();
+            src.set_actions(gdk::DragAction::MOVE);
+            let n = Rc::new(Cell::new(0usize));
+            let (it, r2, n2) = (item.downgrade(), root.downgrade(), n.clone());
+            src.connect_prepare(move |_, _, _| {
+                let ids = dragged(&it.upgrade()?, r2.upgrade()?.upcast_ref());
+                if ids.is_empty() {
+                    return None;
+                }
+                n2.set(ids.len());
+                Some(gdk::ContentProvider::for_value(&drag_text(&ids).to_value()))
+            });
+            src.connect_drag_begin(move |_, d| {
+                let n = n.get();
+                let icon = gtk::DragIcon::for_drag(d);
+                icon.set_child(Some(&label_c(&if n == 1 { "1 message".to_string() } else { format!("{n} messages") }, &["drag-icon"])));
+            });
+            root.add_controller(src);
         }
         item.set_child(Some(&root));
     });
@@ -198,7 +247,7 @@ impl MailView {
         let store = gio::ListStore::new::<glib::BoxedAnyObject>();
         let sel = gtk::MultiSelection::new(Some(store.clone()));
         let show_account = Rc::new(Cell::new(false));
-        let list = gtk::ListView::new(Some(sel.clone()), Some(row_factory(show_account.clone(), false)));
+        let list = gtk::ListView::new(Some(sel.clone()), Some(row_factory(show_account.clone(), false, true)));
         list.set_widget_name("messages");
         let lwin = vbox(0);
         let (ltb, title) = titlebar("inbox");
@@ -327,7 +376,66 @@ impl MailView {
             });
             list.add_controller(g);
         }
+        // messages dragged from the list onto a folder of their account are moved there
+        {
+            let drop = gtk::DropTarget::new(String::static_type(), gdk::DragAction::MOVE);
+            drop.set_preload(true);
+            let v2 = Rc::downgrade(&v);
+            drop.connect_motion(move |t, _, y| {
+                let Some(v) = v2.upgrade() else { return gdk::DragAction::empty() };
+                // until the ids are loaded any folder row will do; the drop checks again
+                let ok = |r: &gtk::ListBoxRow| match t.value().and_then(|x| x.get::<String>().ok()) {
+                    Some(s) => v.drop_plan(r, &drag_ids(&s)).is_some(),
+                    None => matches!(v.folder_keys.borrow().get(r.index() as usize), Some(Some(Sel::Folder(..)))),
+                };
+                match v.folders.row_at_y(y as i32).filter(|r| ok(r)) {
+                    Some(r) => {
+                        v.folders.drag_highlight_row(&r);
+                        gdk::DragAction::MOVE
+                    }
+                    None => {
+                        v.folders.drag_unhighlight_row();
+                        gdk::DragAction::empty()
+                    }
+                }
+            });
+            let v2 = Rc::downgrade(&v);
+            drop.connect_leave(move |_| {
+                if let Some(v) = v2.upgrade() {
+                    v.folders.drag_unhighlight_row();
+                }
+            });
+            let v2 = Rc::downgrade(&v);
+            drop.connect_drop(move |_, val, _, y| {
+                let Some(v) = v2.upgrade() else { return false };
+                v.folders.drag_unhighlight_row();
+                let (Ok(s), Some(r)) = (val.get::<String>(), v.folders.row_at_y(y as i32)) else { return false };
+                v.drop_on(&r, &drag_ids(&s))
+            });
+            folders.add_controller(drop);
+        }
         v
+    }
+
+    /// Where messages dropped on a folder row go: the folder, and those of its account not there already.
+    fn drop_plan(&self, row: &gtk::ListBoxRow, ids: &[i64]) -> Option<(i64, String, Vec<i64>)> {
+        let Some(Some(Sel::Folder(account, mb))) = self.folder_keys.borrow().get(row.index() as usize).cloned() else { return None };
+        let ids: Vec<i64> = eng().db.msgs(ids).into_iter().filter(|m| m.account == account && m.mailboxes != [mb.clone()]).map(|m| m.id).collect();
+        (!ids.is_empty()).then_some((account, mb, ids))
+    }
+
+    /// Moves dropped messages to the folder of [row]; false when there is nothing to move there.
+    pub fn drop_on(&self, row: &gtk::ListBoxRow, ids: &[i64]) -> bool {
+        let Some((account, mb, moved)) = self.drop_plan(row, ids) else { return false };
+        let name = eng().mailbox_name(account, &mb).to_lowercase();
+        let others = eng().db.msgs(ids).iter().filter(|m| m.account != account).count();
+        let n = moved.len();
+        run(async move { eng().move_to(moved, account, &mb).await }, move |r| match r {
+            Ok(()) if others > 0 => toast(&format!("{n} moved to {name} ({others} of other accounts stay)")),
+            Ok(()) => toast(&format!("{n} moved to {name}")),
+            Err(e) => toast_err(&err_text(&e)),
+        });
+        true
     }
 
     pub fn focus_filter(&self) {

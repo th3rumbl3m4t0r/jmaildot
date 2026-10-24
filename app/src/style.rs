@@ -137,6 +137,8 @@ listview > row:selected, list > row:selected {{ background: alpha({accent}, 0.22
 list.plain > row {{ border-bottom: none; padding: 1px 6px; }}
 list.folders > row {{ border-bottom: none; padding: 1px 6px; min-height: 20px; }}
 list.folders > row.account {{ color: {accent}; font-size: 11px; letter-spacing: 1px; padding-top: 8px; }}
+list.folders > row:drop(active) {{ background: alpha({accent}, 0.22); box-shadow: inset 0 0 0 1px {accent}; }}
+.drag-icon {{ background: {panel}; color: {fg}; border: 1px solid {accent}; padding: 2px 8px; font-size: 12px; }}
 .msg.unread .from, .msg.unread .subject {{ font-weight: bold; }}
 .msg .marks {{ color: {fg_dim}; font-size: 10px; }}
 .msg .flagged {{ color: {warn}; }}

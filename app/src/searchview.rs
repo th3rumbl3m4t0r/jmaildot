@@ -149,7 +149,7 @@ impl SearchView {
         let store = gio::ListStore::new::<glib::BoxedAnyObject>();
         let sel = gtk::SingleSelection::new(Some(store.clone()));
         sel.set_autoselect(false);
-        let list = gtk::ListView::new(Some(sel.clone()), Some(row_factory(Rc::new(Cell::new(true)), true)));
+        let list = gtk::ListView::new(Some(sel.clone()), Some(row_factory(Rc::new(Cell::new(true)), true, false)));
         list.set_widget_name("s-results");
         let mid = vbox(0);
         let (rtb, _) = titlebar("results");

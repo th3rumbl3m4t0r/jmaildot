@@ -26,7 +26,9 @@ License: **GPL-3.0-or-later** (see [License](#license)).
 ## What it does
 
 - **accounts**: any number, each its own server and user (settings → accounts). Folders of
-  all of them in one tree, plus "all inboxes" and "flagged".
+  all of them in one tree, plus "all inboxes" and "flagged". Drag messages onto a folder of
+  their account to move them there (the selection when the dragged row is in it, else that
+  row), or use `move to…` in the right-click menu.
 - **sync**: the whole mailbox. The first sync lists every message (Email/query) and fetches
   the headers; then every message is downloaded with several `Blob/get` batches at once (as
   many as the server's `maxConcurrentRequests` allows, one kept free), decrypted and taken
@@ -78,7 +80,8 @@ License: **GPL-3.0-or-later** (see [License](#license)).
   cursor goes to the line it complains about), save, activate, deactivate, delete, and a rule
   builder (from / to / subject / header / body; contains / is / matches / regex; move, copy,
   mark read, flag, discard, redirect; and mark read, then stop) that appends an `if` block
-  with one `require` line kept in step.
+  with one `require` line kept in step. Folders go in by their whole path (`Inbox/lists`):
+  Stalwart reads a bare name as a top-level folder and, finding none, keeps the mail in the inbox.
 - **PGP** (settings → keys): Sequoia (OpenSSL backend). Import your private key (file or
   paste) and other people's public keys. Reads PGP/MIME, inline PGP, GnuPG 2.4's AEAD (OCB)
   packets, `multipart/signed`; writes AES-256 SEIPD, compressed, signed with SHA-256, or
@@ -132,7 +135,7 @@ one, else to `secrets.json` (0600) in the data folder; settings → accounts say
       examples/bench_search.rs   search speed on a synthetic store
     app/                  maildot: the GTK 4 window
       src/ui.rs           window, top bar, status bar, actions and shortcuts, notifications
-      src/mail.rs         folders, message list (ListView), quick filter, move menu
+      src/mail.rs         folders, message list (ListView), quick filter, move menu, drag to a folder
       src/reader.rs       one message, the HTML layout, highlights
       src/compose.rs      the editor
       src/searchview.rs   the search tab

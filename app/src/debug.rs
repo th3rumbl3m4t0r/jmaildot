@@ -1,5 +1,5 @@
 //! A test hook, on only when MAILDOT_DEBUG_SOCK names a socket: one command per line
-//! (tree, shot, click, set, enter, select, act, text, windows), one answer per command,
+//! (tree, shot, click, set, enter, select, act, drop, text, windows), one answer per command,
 //! ending with a line "." — enough to drive the window from a script and check what it shows.
 
 use crate::util::*;
@@ -275,6 +275,17 @@ fn handle(cmd: &str) -> String {
             crate::settings::open(Some(a1));
             "ok".into()
         }
+        "drop" => {
+            // the message list's selection dropped on a folder row, as a drag would (the drag itself needs a pointer)
+            let Some(u) = crate::ui::try_ui() else { return "no ui".into() };
+            match find(a1).and_then(|w| w.downcast::<gtk::ListBoxRow>().ok()) {
+                None => format!("no row {a1}"),
+                Some(r) => {
+                    let ids: Vec<i64> = u.mail.selected().iter().map(|m| m.id).collect();
+                    if u.mail.drop_on(&r, &ids) { format!("dropped {}", ids.len()) } else { "refused".into() }
+                }
+            }
+        }
         "status" => {
             let e = eng();
             format!("{:?} syncing={} messages={}", e.statuses(), e.syncing(), e.db.total_messages())
@@ -287,6 +298,6 @@ fn handle(cmd: &str) -> String {
             }
             "ok".into()
         }
-        _ => "commands: windows | tree [win] | treeall [win] | shot <png> [win] | click <name> | set <name> <text> | enter <name> | select <name> <i> | text <name> | act <action> [i64] | status | close <win>".into(),
+        _ => "commands: windows | tree [win] | treeall [win] | shot <png> [win] | click <name> | set <name> <text> | enter <name> | select <name> <i> | text <name> | act <action> [i64] | drop <folder row> | status | close <win>".into(),
     }
 }
